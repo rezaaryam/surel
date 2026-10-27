@@ -1,0 +1,2 @@
+# Copy to .dev.vars for `npm run dev`. Never commit .dev.vars.
+SUREL_PASSWORD=choose-a-long-password

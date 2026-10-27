@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>surel · email on your own domain, on Cloudflare</title>
+<meta name="description" content="Receive, read, and send email on your own domain with Cloudflare Workers, Email Routing, Email Service, D1, and R2. Open source.">
+<meta property="og:title" content="surel · email on your own domain, on Cloudflare">
+<meta property="og:image" content="https://rezaaryam.github.io/surel/shot.webp">
+<style>
+  :root { --bg: #f6f5f1; --ink: #17181b; --ink-2: #4a4c52; --ink-3: #85878d; --line: #e3e0d7; --card: #fff; --acc: #2346d8; --soft: #e2e8fc; color-scheme: light; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #131416; --ink: #ececea; --ink-2: #b9bab8; --ink-3: #7d7f84; --line: #2a2b2f; --card: #1b1c1f; --acc: #7e9bff; --soft: #1e2848; color-scheme: dark; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 21px; letter-spacing: -.02em; text-decoration: none; color: inherit; }
+  .brand i { width: 30px; height: 30px; border-radius: 9px; background: var(--acc); display: grid; place-items: center; }
+  .brand svg { width: 17px; height: 17px; }
+  nav a { color: var(--ink-2); text-decoration: none; margin-left: 22px; font-size: 15px; }
+  h1 { font-size: clamp(42px, 6.4vw, 78px); line-height: 1; letter-spacing: -.04em; margin: 64px 0 22px; max-width: 13ch; }
+  h1 em { font-style: normal; color: var(--acc); }
+  .lead { font-size: 20px; color: var(--ink-2); max-width: 46ch; margin: 0; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 30px 0 56px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 22px; border-radius: 12px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); color: var(--ink); background: var(--card); }
+  .btn.main { background: var(--acc); border-color: var(--acc); color: #fff; }
+  .shot { border-radius: 18px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 50px 100px -60px rgba(0,0,0,.45); background: var(--card); }
+  .shot img { display: block; width: 100%; height: auto; }
+  section { padding: 84px 0 0; }
+  h2 { font-size: clamp(30px, 4vw, 46px); letter-spacing: -.03em; line-height: 1.05; margin: 0 0 14px; }
+  .sub { color: var(--ink-2); max-width: 58ch; margin: 0 0 34px; }
+  .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
+  .flow div { padding: 20px 20px 4px 0; }
+  .flow div + div { padding-left: 20px; border-left: 1px solid var(--line); }
+  .flow b { display: block; font-size: 13px; color: var(--acc); font-family: ui-monospace, Menlo, monospace; margin-bottom: 8px; }
+  .flow h3 { margin: 0 0 6px; font-size: 20px; }
+  .flow p { margin: 0; color: var(--ink-2); font-size: 15px; }
+  ul.feat { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 48px; }
+  ul.feat li { break-inside: avoid; padding: 14px 0; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 16px; }
+  ul.feat b { color: var(--ink); }
+  pre { margin: 0; padding: 20px 22px; border-radius: 14px; background: #17181b; color: #ececea; font: 14px/1.7 ui-monospace, Menlo, monospace; overflow-x: auto; }
+  pre .c { color: #85878d; }
+  .note { margin-top: 18px; padding: 16px 18px; border-radius: 12px; background: var(--soft); color: var(--ink-2); font-size: 15px; }
+  footer { margin-top: 96px; padding: 30px 0 50px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 15px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer a { color: inherit; }
+  @media (max-width: 820px) { .flow { grid-template-columns: 1fr 1fr; } .flow div:nth-child(3) { border-left: 0; padding-left: 0; } ul.feat { columns: 1; } nav a:not(.gh) { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="./"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="m4.5 6.5 7.5 6 7.5-6"/></svg></i>surel</a>
+    <nav><a href="#how">How it works</a><a href="#setup">Set up</a><a class="gh" href="https://github.com/rezaaryam/surel">GitHub</a></nav>
+  </header>
+
+  <h1>Email on <em>your own domain</em>, on Cloudflare.</h1>
+  <p class="lead">Receive mail for you@yourdomain.com, read it in a small web inbox, and reply from the same address. One Worker, no mail server.</p>
+  <div class="cta"><a class="btn main" href="app/">Try the demo inbox</a><a class="btn" href="https://github.com/rezaaryam/surel">View on GitHub</a></div>
+  <picture class="shot"><source srcset="shot-dark.webp" media="(prefers-color-scheme: dark)"><img src="shot.webp" alt="The surel inbox with folders, a message list, and an open message with two attachments" width="1440" height="860"></picture>
+
+  <section id="how">
+    <h2>Four Cloudflare pieces, one Worker.</h2>
+    <p class="sub">Everything runs in your own Cloudflare account. Your mail is stored in your D1 database and R2 bucket, not on someone else's server.</p>
+    <div class="flow">
+      <div><b>01 receive</b><h3>Email Routing</h3><p>Mail to your domain goes to the Worker's email() handler.</p></div>
+      <div><b>02 store</b><h3>D1 and R2</h3><p>Rows in D1; bodies, the original .eml, and attachments in R2.</p></div>
+      <div><b>03 read</b><h3>Web inbox</h3><p>Plain HTML, CSS, and JS served by the same Worker.</p></div>
+      <div><b>04 send</b><h3>Email Service</h3><p>Replies leave as your address, signed with DKIM.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Small, but complete.</h2>
+    <p class="sub">What you need from a personal or small-team inbox, and nothing that needs a server to babysit.</p>
+    <ul class="feat">
+      <li><b>Several addresses</b> on one domain, each with a display name; switch any of them off.</li>
+      <li><b>Safe reading</b>: sandboxed HTML, no scripts, remote images hidden until you ask.</li>
+      <li><b>Reply and forward</b> from the address the mail was sent to; a copy is kept in Sent.</li>
+      <li><b>Folders and search</b>: inbox, starred, sent, archive, spam, trash.</li>
+      <li><b>Copies and blocks</b>: forward to another inbox, refuse senders or whole domains.</li>
+      <li><b>Keyboard and phone</b>: c, /, j, k, e, r; one pane at a time on small screens.</li>
+    </ul>
+  </section>
+
+  <section id="setup">
+    <h2>Set up in about ten minutes.</h2>
+    <p class="sub">You need a domain whose DNS is on Cloudflare. The full steps are in the README.</p>
+<pre><span class="c"># storage and a password</span>
+npx wrangler d1 create surel
+npx wrangler r2 bucket create surel-mail
+npx wrangler secret put SUREL_PASSWORD
+
+<span class="c"># schema and Worker</span>
+npm run deploy
+
+<span class="c"># then in the dashboard:</span>
+<span class="c">#  Email Routing → Catch-all → Send to a Worker → surel</span>
+<span class="c">#  Email Service → Email Sending → Onboard Domain</span></pre>
+    <p class="note">Receiving is free. Sending to any recipient needs the Workers Paid plan; on the free plan the Worker can send to addresses verified in Email Routing. Email Sending is in beta, with a daily quota that grows over time.</p>
+  </section>
+
+  <footer><span>surel, Indonesian for email. MIT License.</span><span>Made by <a href="https://rezaaryamaulana.my.id/">Reza Arya Maulana</a></span></footer>
+</div>
+</body>
+</html>

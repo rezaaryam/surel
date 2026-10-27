@@ -1,0 +1,26 @@
+{
+  "name": "surel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Email on your own domain, on Cloudflare Workers: receive with Email Routing, send with Email Service, read in a small web inbox. D1 and R2 for storage.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler d1 migrations apply surel --remote && wrangler deploy",
+    "db:local": "wrangler d1 migrations apply surel --local",
+    "demo": "node scripts/build-demo.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "postal-mime": "^4.1.4"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0",
+    "wrangler": "^4.40.0"
+  },
+  "keywords": ["email", "cloudflare-workers", "email-routing", "d1", "r2", "inbox", "custom-domain"],
+  "author": "Reza Arya Maulana",
+  "license": "MIT",
+  "homepage": "https://rezaaryam.github.io/surel/",
+  "repository": { "type": "git", "url": "https://github.com/rezaaryam/surel.git" }
+}

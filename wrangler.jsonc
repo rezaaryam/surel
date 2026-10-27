@@ -1,0 +1,30 @@
+// surel configuration. Replace the values marked "change me", then follow README.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "surel",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+
+  // the inbox app
+  "assets": { "directory": "./public", "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*"] },
+
+  // message rows
+  "d1_databases": [{ "binding": "DB", "database_name": "surel", "database_id": "change me: printed by `npx wrangler d1 create surel`", "migrations_dir": "migrations" }],
+
+  // message bodies, raw .eml files, attachments
+  "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "surel-mail" }],
+
+  // sending (Cloudflare Email Service)
+  "send_email": [{ "name": "EMAIL" }],
+
+  "vars": {
+    "DOMAIN": "yourdomain.com",              // change me
+    "DEFAULT_FROM": "hello@yourdomain.com",  // change me
+    "DEFAULT_NAME": "Your Name",             // change me
+    "CATCH_ALL": "false",                    // "true": accept any address on the domain
+    "FORWARD_TO": "",                        // optional: also forward every message here (must be verified in Email Routing)
+    "BLOCK_SENDERS": ""                      // optional: "spam@example.com,@annoying.com"
+  }
+  // secrets (not in this file): npx wrangler secret put SUREL_PASSWORD
+}
